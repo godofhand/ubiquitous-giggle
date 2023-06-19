@@ -1,0 +1,520 @@
+package project;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.*;
+import java.security.PublicKey;
+import java.util.Vector;
+import javax.swing.*;
+
+
+import java.util.*;
+public class MainMenu {
+
+		 static JFrame frame; // 窗体
+		    JPanel searchPanel; // 面板
+		    Container container; // 容器
+		    JTextField field1, field2; // 文本框
+		    JButton enterButton, backButton,searchButton;//按钮
+		    JTextArea area;//文本域
+		    ActionListener listener;//监听器
+		    JList list;//储存文件列表的集合
+		    public MainMenu() {
+	    // 设置窗口标题
+	    frame = new JFrame("文件管理器");
+	    // 设置窗口大小
+	    frame.setSize(1000, 600);
+	    // 设置窗口位置由系统决定
+	    frame.setLocationByPlatform(true);
+	    // 设置窗口关闭操作
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    
+	    // 设置容器背景色为灰色
+	    container = frame.getContentPane();
+	    container.setBackground(Color.gray);
+	    // 创建一个新的JPanel来存放搜索相关的组件
+	    searchPanel = new JPanel();
+	    // 设置面板背景色为浅灰色
+	    searchPanel.setBackground(Color.LIGHT_GRAY);
+	    // 设置面板布局为流式布局，并设置对齐方式
+	    searchPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 10));
+	    
+	    // 创建文本框并设置字体、颜色、边框等属性
+	    field1 = new JTextField(20);
+	    field1.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+	    field1.setForeground(Color.black);
+	    field1.setBorder(BorderFactory.createLineBorder(Color.black));
+	    field1.setHorizontalAlignment(JTextField.CENTER);
+	   
+	    // 将文本框添加到面板
+	    searchPanel.add(field1);
+	    
+	    // 创建进入按钮并设置字体、背景色、边框等属性
+	    enterButton = new JButton("进入");
+	    enterButton.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+	    enterButton.setBackground(Color.white);
+	    enterButton.setBorder(BorderFactory.createLineBorder(Color.black));
+	    enterButton.setActionCommand("enterButton");
+	    // 将按钮添加到面板
+	    searchPanel.add(enterButton); 
+	    backButton = new JButton("返回");
+	    backButton.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+	    backButton.setBackground(Color.white);
+	    backButton.setBorder(BorderFactory.createLineBorder(Color.black));
+	    backButton.setActionCommand("backButton");
+	    backButton.setVisible(false);
+	    searchPanel.add(backButton); 
+	    // 创建搜索文本框并设置字体、颜色、边框等属性
+	    field2 = new JTextField(20);
+	    field2.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+	    field2.setForeground(Color.black);
+	    field2.setBorder(BorderFactory.createLineBorder(Color.black));
+	    field2.setHorizontalAlignment(JTextField.CENTER);
+	//创建文本框提示
+	    field2.setText("请输入搜索内容");
+	    field2.addFocusListener( new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (field2.getText().equals("请输入搜索内容")) {
+                	field2.setText("");
+                	field2.setForeground(Color.gray);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (field2.getText().isEmpty()) {
+                	field2.setForeground(Color.GRAY);
+                	field2.setText("请输入搜索内容");
+                }
+            }
+        });
+        
+    
+	    // 将文本框添加到面板
+	    searchPanel.add(field2);
+	    
+	    // 创建搜索按钮并设置字体、背景色、边框等属性
+	    searchButton = new JButton("搜索");
+	    searchButton.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+	    searchButton.setBackground(Color.white);
+	    searchButton.setBorder(BorderFactory.createLineBorder(Color.black));
+	    searchButton.setActionCommand("searchButton");
+	    // 将按钮添加到面板
+	    searchPanel.add(searchButton);
+	    // 将搜索面板添加到容器的North位置
+	    container.add(searchPanel, BorderLayout.NORTH);
+	    
+	    // 创建列表并设置字体、颜色、边框等属性
+	    list = new JList();
+	    list.setFont(new Font("微软雅黑", Font.PLAIN, 14));
+	    list.setForeground(Color.black);
+	    list.setBorder(BorderFactory.createLineBorder(Color.black));
+	    // 创建滚动面板并将列表添加到其中
+	    JScrollPane gdk = new JScrollPane(list);
+	    // 将滚动面板添加到容器的Center位置
+	    container.add(gdk, BorderLayout.CENTER);
+	    
+	    // 创建文本框并设置字体、颜色、边框等属性
+	    area = new JTextArea(3, 1);
+	    area.setFont(new Font("微软雅黑", Font.PLAIN, 30));
+	    area.setForeground(Color.black);
+	    area.setBorder(BorderFactory.createLineBorder(Color.black));
+	    
+	    // 创建滚动面板并将文本框添加到其中
+	    JScrollPane scrollPane = new JScrollPane(area);
+	    // 将滚动面板添加到容器的South位置
+	    container.add(scrollPane, BorderLayout.SOUTH);
+	    
+	    // 设置窗口可见
+	    frame.setVisible(true);
+	
+        //用switch实现按钮响应
+        addActionListener(new ActionListener() {
+            
+            public void actionPerformed(ActionEvent e) {
+                switch (e.getActionCommand()) {
+                    case "enterButton":
+                        enterButtonActionPerformed();
+                        break;
+                    case "backButton":
+                    	backButtonActionPerformed();
+                    	   break;
+                    case "searchButton":
+                    	searchButtonActionPerformed();
+                    	break;
+                }
+            }
+        });}
+    
+
+		 
+       
+		
+    //为按钮设置监听器
+
+		
+    public void addActionListener(ActionListener a) {
+        enterButton.addActionListener(a);
+        backButton.addActionListener(a);
+        searchButton.addActionListener(a);
+    }
+ 
+	 
+           
+  
+    
+  
+//进入按钮功能实现
+    private void enterButtonActionPerformed() {
+        String path = field1.getText();  	
+        area.setText(path);
+       // 获取用户输入路径
+        File file = new File(path); // 创建文件对象
+        if (file.exists() && file.isDirectory()) { // 如果文件存在并且是一个目录
+        	   updateListData(path);// 将文件列表添加到JList中
+            }
+         else {
+            JOptionPane.showMessageDialog(frame, "目录不存在或不是一个目录！", "错误", JOptionPane.ERROR_MESSAGE);
+        }
+ 
+    //设置双击鼠标打开文件夹与右键菜单
+        list.addMouseListener(new MouseAdapter() {        
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) { // 判断是否双击
+                	backButton.setVisible(true);
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint()); // 获取双击的索引位置
+                    File file = (File) list.getModel().getElementAt(index);
+                    String path1 = file.getPath();// 获取双击文件夹的路径
+                    field1.setText(path1);
+                    updateListData(path1);// 根据该路径更新JList的数据源
+                  
+                }
+            
+        }
+            
+           
+
+         
+          
+
+            //实现鼠标右键菜单显示
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) { // 判断是否右键单击
+                	
+                        showPopupMenu(e);//调用显示菜单
+                 
+                    } // 在此处处理右键单击事件
+                }
+            
+        });}
+    //返回按钮功能实现
+    private void backButtonActionPerformed() {   
+    	String path=field1.getText();//导入目录路径
+      	 File currentDir = new File(path);
+      	   File parentDir = currentDir.getParentFile(); //获取母文件夹
+           if (parentDir!= null) {
+               String parentPath = parentDir.getAbsolutePath();
+               field1.setText(parentPath);
+               area.setText(parentPath);
+               updateListData(parentPath);
+          
+                }
+           else {
+            	   backButton.setVisible(false);
+  			}
+          }
+ //对文件夹进行批注
+    class MyCellRenderer extends DefaultListCellRenderer {
+        public Component getListCellRendererComponent(JList<?> list, Object value,//设置列表显示方式
+                int index, boolean isSelected, boolean cellHasFocus) {
+            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            File file = (File) value;
+            if (file.isDirectory()) { // 如果是文件夹，设置不同的图标或者文本颜色等
+                setIcon(UIManager.getIcon("FileView.directoryIcon"));
+                setForeground(Color.BLUE);
+                
+	        }
+            
+            return c;
+        }
+    }
+    //更新文件列表
+    private void updateListData(String path) {
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                list.setListData(files);
+                list.setCellRenderer(new MyCellRenderer()); // 设置自定义的ListCellRenderer
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "目录不存在或不是一个目录！", "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    //实现搜索功能
+    public File[] searchFile(File[] files, String keyword) {
+       java.util. List<File> result = new ArrayList<>();
+        for (File file : files) {
+            if (file.getName().contains(keyword)) { // 如果文件名包含关键字
+                result.add(file);
+            } else if (file.isDirectory()) { // 如果是目录，则递归搜索
+                File[] subFiles = file.listFiles();
+                if (subFiles != null) {
+                    File[] subResult = searchFile(subFiles, keyword);
+                    result.addAll(Arrays.asList(subResult));
+                }
+            }
+        }
+        return result.toArray(new File[0]); // 将List转为数组返回
+    }
+//搜索按钮功能实现
+    private void searchButtonActionPerformed() {
+        String path = field1.getText(); // 获取用户输入路径
+        String keyword = field2.getText(); // 获取用户输入关键字
+        File file = new File(path); // 创建文件对象
+        File[] files = file.listFiles(); // 获取目录下所有文件和目录
+        if (files != null) {
+            if (keyword.isEmpty()) { // 如果关键字为空，则显示所有文件
+                list.setListData(files);
+                area.setText("共找到" + files.length + "个文件"); // 在文本框中显示文件数量
+            } else { // 否则搜索文件并显示搜索结果
+                File[] result = searchFile(files, keyword);
+                list.setListData(result);
+                area.setText("共找到" + result.length + "个文件"); // 在文本框中显示文件数量
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "目录不存在或不是一个目录！", "错误", JOptionPane.ERROR_MESSAGE);
+        }}
+    
+     
+  
+//右键菜单功能的实现
+        private void showPopupMenu(MouseEvent e) {
+           
+            	JPopupMenu popupMenu = new JPopupMenu();
+                JMenuItem menuItem1 = new JMenuItem("复制");
+                JMenuItem menuItem2 = new JMenuItem("粘贴");
+                JMenuItem menuItem3 = new JMenuItem("预览");
+                JMenuItem menuItem4 = new JMenuItem("重命名");
+                JMenuItem menuItem5 = new JMenuItem("删除");
+                JMenuItem menuItem6 = new JMenuItem("统计");
+                // 为按钮添加事件监听器
+              //处理复制点击事件
+                menuItem1.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	  File file = (File) list.getSelectedValue();
+                          if (file != null) {
+                              // 获取文件的路径
+                              String path = file.getPath();
+                              // 复制文件到剪贴板
+                              StringSelection stringSelection = new StringSelection(path);
+                              Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                              clipboard.setContents(stringSelection, null);
+                              area.setText ("已复制文件路径：" + file.getPath());
+                          }
+                    }
+                });
+                // 处理粘贴点击事件
+                menuItem2.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	// 获取剪贴板中的内容
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        Transferable contents = clipboard.getContents(null);
+                        if (contents != null && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                            try {
+                                // 获取文件路径
+                                String path = (String) contents.getTransferData(DataFlavor.stringFlavor);
+                                // 粘贴文件
+                                File file = new File(path);
+                                if (file.exists()) {
+                                    // 处理重名文件的情况
+                                    int i = 1;
+                                    String name = file.getName();
+                                    String parent = file.getParent();
+                                    String base = name.substring(0, name.lastIndexOf("."));
+                                    String ext = name.substring(name.lastIndexOf("."));
+                                    while (file.exists()) {
+                                        file = new File(parent, base + "(" + i + ")" + ext);
+                                        i++;
+                                    }
+                                    file.createNewFile();
+                                    area.setText ("已粘贴文件" + file.getName());
+                                    //更新文件列表
+                                    File parentDir = file.getParentFile();//获取文件所在目录
+                                    File[] files = parentDir.listFiles();
+                                    list.setListData(files);
+                                }
+                            } catch (UnsupportedFlavorException | IOException ex) {
+                                ex.printStackTrace();
+                            }
+                          
+                        } 
+                    }
+                });// 处理预览点击事件
+                menuItem3.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	File file = (File) list.getSelectedValue();//获取列表点击文件
+                    	if (file != null) {
+                    	    // 判断文件是否为文本文件
+                    	    if (!isTextFile(file)) {
+                    	        JOptionPane.showMessageDialog(null, "该文件不是文本文件，无法预览");
+                    	        return;
+                    	    }
+                    	    // 读取文件的前100行
+                    	   java.util.List<String> lines = readFirst100Lines(file);
+                    	    // 创建一个小窗口，显示文件的前100行
+                    	    showPreview(lines);
+                    	}// 处理按钮3点击事件
+                    }
+                });
+             // 处理重命名点击事件
+                menuItem4.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	File file = (File) list.getSelectedValue();//获取列表点击文件
+                        if (file != null) {
+                            // 弹出重命名对话框
+                            String name = JOptionPane.showInputDialog("请输入新的文件名：", file.getName());
+                            if (name != null && !name.equals(file.getName())) {
+                                // 修改文件名
+                                String parent = file.getParent();
+                                File newFile = new File(parent, name);
+                                if (file.renameTo(newFile)) {
+                                	 area.setText("文件重命名成功：" + newFile.getPath());
+                                	 //更新文件列表
+                                     File parentDir = file.getParentFile();
+                                     File[] files = parentDir.listFiles();
+                                     list.setListData(files);
+                                   
+                                } else {
+                                	 area.setText("文件名重复重命名失败");
+                                }
+                            }
+                        }
+                    }
+                });
+                // 处理删除点击事件
+                menuItem5.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                    	File file = (File) list.getSelectedValue();//获取列表点击文件
+                        if (file != null) {
+                            // 弹出确认对话框
+                            int option = JOptionPane.showConfirmDialog(null, "确认删除选定的文件或文件夹吗？", "确认删除", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                            if (option == JOptionPane.YES_OPTION) {
+                                // 删除文件或文件夹
+                                if (file.isFile()) {
+                                    if (file.delete()) {
+                                
+                                    	area.setText("文件删除成功：" + file.getPath());
+                                    } else {
+                                    	area.setText("文件删除失败");
+                                    }
+                                } else {
+                                    if (deleteDirectory(file)) {
+                                    	area.setText("文件夹删除成功：" + file.getPath());
+                                    } else {
+                                    	area.setText("文件夹删除失败");
+                                    }
+                                }
+                            }
+                        }
+                        //更新文件列表
+                        File parentDir = file.getParentFile();
+                        File[] files = parentDir.listFiles();
+                        list.setListData(files);
+                      
+                    }
+                });
+             // 处理统计点击事件
+                menuItem6.addActionListener(new ActionListener() {
+                	public void actionPerformed(ActionEvent e) {
+                        File directory = (File) list.getSelectedValue();//获取列表点击文件
+                        if (directory != null && directory.isDirectory()) {
+                            // 统计选定文件夹中的文件数目
+                            int count = directory.listFiles().length;
+                            area.setText("选定文件夹中的文件数目为：" + count);
+                        }
+                    }
+                	 });
+                // 将按钮添加到菜单中
+                popupMenu.add(menuItem1);
+                popupMenu.add(menuItem2);
+                popupMenu.add(menuItem3);
+                popupMenu.add(menuItem4);
+                popupMenu.add(menuItem5);
+                popupMenu.add(menuItem6);
+                // 显示菜单
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());}
+        
+        
+     // 判断文件是否为文本文件
+        private boolean isTextFile(File file) {
+            String fileName = file.getName().toLowerCase();
+            return fileName.endsWith(".txt") || fileName.endsWith(".java") || fileName.endsWith(".ini") || fileName.endsWith(".bat");
+        }
+//读取文本文件
+        private static java.util.List<String> readFirst100Lines(File file) {
+        java.util.List<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            int count = 0;
+            while ((line = reader.readLine()) != null && count < 100) {
+                lines.add(line);
+                count++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lines;
+    }
+        //生成文件预览窗口
+        private static void showPreview(java.util.List<String> lines) {
+            // 创建一个文本区域，显示文件的前100行
+            JTextArea textArea = new JTextArea();
+            lines.forEach(textArea::append);
+            // 创建一个滚动窗口，将文本区域添加到其中
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            // 创建一个对话框，将滚动窗口添加到其中，并设置对话框的大小和位置等属性
+            JDialog dialog = new JDialog(frame,"文本预览");
+            dialog.add(scrollPane);
+            dialog.setSize(600, 400);
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
+            dialog.setFont(new Font("微软雅黑", Font.PLAIN, 20));
+        }
+    
+//用递归删除文件的方法实现删除功能
+private boolean deleteDirectory(File dir) {
+    if (dir.isDirectory()) {
+        // 如果是文件夹，则递归删除其下的所有文件和文件夹
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (!deleteDirectory(file)) {
+                    return false;
+                }
+            }
+        }
+    }
+    // 删除文件或空文件夹
+    return dir.delete();
+}
+//运行窗口
+public static void main(String args[]) {
+    new MainMenu();
+}
+}
