@@ -1,0 +1,36 @@
+ }
+    //实现搜索功能
+    public File[] searchFile(File[] files, String keyword) {
+       java.util. List<File> result = new ArrayList<>();
+        for (File file : files) {
+            if (file.getName().contains(keyword)) { // 如果文件名包含关键字
+                result.add(file);
+            } else if (file.isDirectory()) { // 如果是目录，则递归搜索
+                File[] subFiles = file.listFiles();
+                if (subFiles != null) {
+                    File[] subResult = searchFile(subFiles, keyword);
+                    result.addAll(Arrays.asList(subResult));
+                }
+            }
+        }
+        return result.toArray(new File[0]); // 将List转为数组返回
+    }
+//搜索按钮功能实现
+    private void searchButtonActionPerformed() {
+        String path = field1.getText(); // 获取用户输入路径
+        String keyword = field2.getText(); // 获取用户输入关键字
+        File file = new File(path); // 创建文件对象
+        File[] files = file.listFiles(); // 获取目录下所有文件和目录
+        if (files != null) {
+            if (keyword.isEmpty()) { // 如果关键字为空，则显示所有文件
+                list.setListData(files);
+                area.setText("共找到" + files.length + "个文件"); // 在文本框中显示文件数量
+            } else { // 否则搜索文件并显示搜索结果
+                File[] result = searchFile(files, keyword);
+                list.setListData(result);
+                area.setText("共找到" + result.length + "个文件"); // 在文本框中显示文件数量
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "目录不存在或不是一个目录！", "错误", JOptionPane.ERROR_MESSAGE);
+        }}
+    
